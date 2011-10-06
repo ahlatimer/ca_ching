@@ -1,0 +1,2 @@
+module CaChingHelper
+end
