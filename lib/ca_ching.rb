@@ -14,6 +14,8 @@ require 'ca_ching/errors'
 require 'ca_ching/adapters/redis'
 require 'ca_ching/adapters/active_record'
 
+require 'ca_ching/core_ext/array'
+
 module CaChing
   extend Configuration
 end

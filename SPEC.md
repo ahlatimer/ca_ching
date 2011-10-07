@@ -28,8 +28,7 @@ and the order.
     class Person < ActiveRecord::Base
       index :id
       index :first_name, :limit => 1000
-      index :last_name,  :limit => 1000
-      index :created_at, :order => :desc
+      index :last_name,  :limit => 1000, :order => { :created_at => :desc }
       
       has_many :addresses
     end
@@ -67,7 +66,7 @@ These queries are not:
     
     Person.where('first_name = ? OR first_name = ?', 'Andrew', 'David')
     Person.where('first_name != ?', 'Andrew')
-    Person.where(:first_name => 'Andrew').order('created_at desc')
+    Person.where(:first_name => 'Andrew').order('created_at DESC') # not supported because first_name isn't sorted by anything
     Person.where('id >= 200')
      
 ## Caveats

@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 RSpec::Core::RakeTask.new(:spec) do |rspec|
-  rspec.rspec_opts = ['--backtrace', '--debugger', '--color', '--format documentation']
+  rspec.rspec_opts = ['--debugger', '--color', '--format documentation']
 end
 
 task :default => :spec

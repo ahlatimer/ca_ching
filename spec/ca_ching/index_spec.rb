@@ -9,9 +9,9 @@ module CaChing
     
     describe Index, 'index options' do
       it 'allows indexes to be defined with options' do
-        Person.index :name, :order => :asc, :ttl => 12.seconds
+        Person.index :name, :order => { :age => :asc }, :ttl => 12.seconds
         Person.indexes?(:name).should == true
-        Person.send(:indexed_fields)[:name].should == { :order => :asc, :ttl => 12.seconds }
+        Person.send(:indexed_fields)[:name].should == { :order => { :age => :asc }, :ttl => 12.seconds }
       end
       
       it 'rejects unsupported options' do

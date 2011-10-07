@@ -22,6 +22,10 @@ module CaChing
         
       end
       
+      def clear!
+        
+      end
+      
       def method_missing(method_name, *args, &block)
         @cache.send method_name, *args, &block
       end

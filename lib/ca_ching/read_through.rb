@@ -20,13 +20,21 @@ module CaChing
         
         query = CaChing::Query::Select.new(self)
         result = CaChing.cache.find(query)
+        @from_cache = true
         
         if result.nil?
           result = to_a_without_cache
           CaChing.cache.insert(result, :for => query)
+          @from_cache = false
         end
         
+        result.from_cache = self.from_cache?
+        
         return result
+      end
+      
+      def from_cache?
+        @from_cache ||= false
       end
     end
     

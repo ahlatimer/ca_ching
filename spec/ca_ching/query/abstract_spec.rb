@@ -59,6 +59,10 @@ module CaChing
             query.where.should == {}
           end
           
+          it 'interpolates bind_values' do
+            pending 'needs a hook to get collection for Model.find(id), since that seems the only place that uses bind_values'
+          end
+          
           describe 'string queries' do
             it 'handles a single condition' do
               ar = Person.where('name = ?', 'Andrew')

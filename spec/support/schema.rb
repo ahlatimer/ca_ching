@@ -39,6 +39,7 @@ module Schema
           t.integer  :parent_id
           t.string   :name
           t.integer  :salary
+          t.integer  :age
         end
 
         create_table :articles, :force => true do |t|
