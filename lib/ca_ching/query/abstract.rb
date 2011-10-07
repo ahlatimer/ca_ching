@@ -11,7 +11,7 @@ module CaChing
       def initialize(active_record_collection, options={})
         self.tap do
           @collection = active_record_collection
-          @sql = object.to_sql
+          @sql = active_record_collection.to_sql
         end
       end
       
@@ -43,11 +43,11 @@ module CaChing
       end
       
       def order
-        @collection.order_values.inject({}) do |hash, value|
-          value.split(',').each do |value|
-            match = ORDER.match(value).captures
-            hash[match[1]] = match[2]
-          end
+        order_values = @collection.order_values.map { |v| v.split(',').map { |v| v.strip } }.flatten
+        
+        order_values.inject({}) do |hash, value|
+          match = ORDER.match(value).captures
+          hash[match[1].to_sym] = match[2] == "ASC" ? :asc : :desc
           
           hash
         end

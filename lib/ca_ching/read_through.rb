@@ -1,6 +1,5 @@
 require 'ca_ching/query/abstract'
 require 'ca_ching/query/calculation'
-require 'ca_ching/query/primary_key'
 require 'ca_ching/query/select'
 
 require 'pp'
