@@ -17,13 +17,13 @@ module CaChing
         end
         
         it 'finds by id' do
-          person = Person.find(1).should_not_receive(:to_a_without_cache)
+          person = Person.find(1)
           @person.attributes.should == person.attributes
         end
         
         describe 'dynamic finders' do
           it 'finds with one parameter' do
-            person = Person.find_by_name(@person.name).should_not_receive(:to_a_without_cache)
+            person = Person.find_by_name(@person.name)
             @person.attributes.should == person.attributes
           end
           
