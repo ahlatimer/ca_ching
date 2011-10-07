@@ -3,6 +3,8 @@ require 'ca_ching/query/calculation'
 require 'ca_ching/query/primary_key'
 require 'ca_ching/query/select'
 
+require 'pp'
+
 module CaChing
   module ReadThrough
     extend ActiveSupport::Concern
@@ -17,7 +19,7 @@ module CaChing
       def to_a_with_cache
         return to_a_without_cache if CaChing.cache.nil? 
         
-        query = CaChing::Query::Select.new(:where => self.where_values, :order => self.order_values, :limit => self.limit_value)
+        query = CaChing::Query::Select.new(self)
         result = CaChing.cache.find(query)
         
         if result.nil?

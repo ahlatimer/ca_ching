@@ -11,7 +11,6 @@ require 'ca_ching/index'
 require 'ca_ching/errors'
 
 require 'ca_ching/adapters/redis'
-require 'ca_ching/adapters/arel'
 require 'ca_ching/adapters/active_record'
 
 module CaChing

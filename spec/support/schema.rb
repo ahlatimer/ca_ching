@@ -17,6 +17,7 @@ end
 class Article < ActiveRecord::Base
   belongs_to :person
   has_many :tags
+  has_many :comments
 end
 
 class Comment < ActiveRecord::Base
