@@ -59,7 +59,7 @@ For example, these queries are supported:
 
     Person.where(:first_name => 'Andrew')
     Person.find_by_first_name('Andrew')
-    Person.where('created_at >= ?', Date.today - 1)
+    Person.where('created_at >= ?', Date.today - 1).where(:first_name => 'Andrew')
     Person.where('created_at <= ?', Date.today - 1).where(:first_name => 'Andrew').limit(10).order('created_at desc')
 
 These queries are not:
@@ -80,6 +80,8 @@ If multiple fields are specified, at least one of them must have the order of th
 
 If the field is sorted, it must respond to `to_f` and return a reasonable response (e.g., even though a 
 string will respond to `to_f`, it will return `0.0` if it is not a number). 
+
+By default, indexes are ordered by the primary key. 
 
 ### Composite keys and queries against multiple fields
 
