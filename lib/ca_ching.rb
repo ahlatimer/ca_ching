@@ -5,7 +5,8 @@ require 'redis/connection/hiredis'
 
 require 'ca_ching/configuration'
 
-require 'ca_ching/cache'
+require 'ca_ching/read_through'
+require 'ca_ching/write_through'
 require 'ca_ching/index'
 
 require 'ca_ching/errors'
