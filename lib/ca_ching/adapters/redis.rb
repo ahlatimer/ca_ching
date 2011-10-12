@@ -1,8 +1,3 @@
-# This is kind of useless because it just delegates
-# everything to the redis gem, but I'm including it
-# just in case I want to do some funky things in the
-# future. 
-
 module CaChing  
   module Adapters
     class Redis
@@ -15,11 +10,12 @@ module CaChing
         # where_values in the form { :field => ['=', 'value'] }
         where_values = query.where
         keys = where_values.map { |where_value| "#{where_value[0]}#{where_value[1][0]}#{where_value[1][1]}" }
+        return nil if keys.empty?
         
         offset = query.offset || 0
         limit = (query.limit || -1) + offset
         
-        if keys.length == 1
+        if keys.length <= 1
           key = "#{query.table_name}:#{keys[0]}"
           return nil unless @cache.exists key # the key has never been added to the cache, so it's a miss
           
@@ -33,7 +29,7 @@ module CaChing
             return nil unless keys.inject(true) { |memo, key| @cache.exists("#{query.table_name}:#{key}") && memo }
             @cache.zinterstore intersection_key, *keys.map { |key| "#{query.table_name}:#{key}" }
             @cache.zrange(intersection_key, offset, limit)
-            @cache.del(intersection_key) unless options[:store_key]
+            @cache.del(intersection_key) unless options[:keep_intersection]
           end
         end
         
@@ -52,6 +48,8 @@ module CaChing
         deflated.each do |object_and_score|
           @cache.zadd key, *object_and_score
         end
+        
+        objects
       end
 
       def update(object, options={})
@@ -94,7 +92,9 @@ module CaChing
       def deflate_with_score(objects, options={})
         return nil if objects.nil?
         
-        objects.map { |object| [(object.try(:to_i) || 0), ActiveSupport::JSON.encode(object.attributes)] }
+        score_method = options[:sorted_by] || :id
+        
+        objects.map { |object| [object.send(score_method).to_i, ActiveSupport::JSON.encode(object.attributes)] }
       end
       
       def method_missing(method_name, *args, &block)

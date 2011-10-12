@@ -24,7 +24,7 @@ module CaChing
         
         if result.nil?
           result = to_a_without_cache
-          CaChing.cache.insert(result, :for => query)
+          CaChing.cache.insert(result, :for => query) if cacheable?
           @from_cache = false
         end
         
@@ -35,6 +35,10 @@ module CaChing
       
       def from_cache?
         @from_cache ||= false
+      end
+      
+      def cacheable?
+        false
       end
     end
     
