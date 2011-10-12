@@ -56,7 +56,7 @@ module CaChing
             it 'finds with one parameter' do
               people = Person.where(:age => @person.age).all
               people.from_cache?.should == true
-              people.should == Person.where(:age => @person.age).to_a_without_cache
+              people.sort.should == Person.where(:age => @person.age).to_a_without_cache.sort
             end
             
             it 'finds with many parameters' do
@@ -171,8 +171,8 @@ module CaChing
           describe 'limit' do
             it 'limits the returned set to the number specified in limit' do
               articles = Article.where(:person_id => @person.id).limit(2)
-              people.size.should == 2
-              people.from_cache?.should == true
+              articles.size.should == 2
+              articles.from_cache?.should == true
             end
           end
           

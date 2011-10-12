@@ -9,10 +9,13 @@ module CaChing
       KEY_CMP_VALUE = /^\(?#{TABLE_AND_COLUMN}\s+(=|<|<=|>|>=)\s+#{VALUE}\)?$/              # Matches: KEY = VALUE, (KEY = VALUE)
       ORDER = /^#{TABLE_AND_COLUMN}\s*(ASC|DESC)?$/i                           # Matches: COLUMN ASC, COLUMN DESC, COLUMN
       
+      attr_accessor :klass
+      
       def initialize(active_record_collection, options={})
         self.tap do
           @collection = active_record_collection
           @sql = active_record_collection.to_sql
+          @klass = active_record_collection.klass
         end
       end
       
@@ -28,7 +31,7 @@ module CaChing
             left = value.left.name.to_sym
             right = value.right
             if right == '?'
-              right = @collection.bind_values.find { |value| value.name == left }[1]
+              right = @collection.bind_values.find { |value| value.first.name == left.to_s }[1]
             end
             
             hash[left] = ['=', right]

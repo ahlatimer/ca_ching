@@ -40,23 +40,31 @@ module Schema
           t.string   :name
           t.integer  :salary
           t.integer  :age
+          
+          t.timestamps
         end
 
         create_table :articles, :force => true do |t|
           t.integer :person_id
           t.string  :title
           t.text    :body
+          
+          t.timestamps
         end
 
         create_table :comments, :force => true do |t|
           t.integer :article_id
           t.integer :person_id
           t.text    :body
+          
+          t.timestamps
         end
 
         create_table :tags, :force => true do |t|
           t.integer :article_id
           t.string :name
+          
+          t.timestamps
         end
       end
     end
