@@ -18,6 +18,9 @@ class Article < ActiveRecord::Base
   belongs_to :person
   has_many :tags
   has_many :comments
+  
+  index :title
+  index :person_id
 end
 
 class Comment < ActiveRecord::Base

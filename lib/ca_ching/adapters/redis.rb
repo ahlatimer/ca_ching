@@ -37,39 +37,50 @@ module CaChing
       end
       
       def insert(objects, options={})
-        query = options[:for]
-        return nil if query.nil? || (where_values = query.where).length > 1
+        key = nil
+        if options[:for]
+          query = options[:for]
+          if (where_values = query.where).length == 1
+            where_value = query.where.first
+            key = "#{query.table_name}:#{where_value[0]}#{where_value[1][0]}#{where_value[1][1]}"
+          else
+            nil
+          end
+        elsif options[:at]
+          key = options[:at]
+        end
         
-        where_value = query.where.first
+        return nil if key.nil?
         
-        key = "#{query.table_name}:#{where_value[0]}#{where_value[1][0]}#{where_value[1][1]}"
         deflated = deflate_with_score(objects)
-        
         deflated.each do |object_and_score|
           @cache.zadd key, *object_and_score
         end
-        
+      
         objects
       end
 
       def update(object, options={})
+        old_keys = object.to_keys(:old_values => true).select { |key| @cache.exists(key) }
+        new_keys = object.to_keys(:old_values => false).select { |key| @cache.exists(key) }
         
-      end
-      
-      def destroy(object, options={})
-        key = object_or_key.is_a?(String) ? object_or_key : object_or_key.to_key
-        
-        @cache.zrem(key)
-      end
-      
-      def destroy_all(objects, options={})
-        objects.each do |object|
-          destroy(object, options)
+        @cache.multi do
+          old_keys.each do |key|
+            destroy(object, :at => key, :old_values => true)
+          end
+
+          new_keys.each do |key|
+            insert([object], :at => key)
+          end
         end
       end
       
+      def destroy(object, options={})
+        @cache.zrem(options[:at], deflate(object, :old_values => options[:old_values]))
+      end
+      
       def clear!
-        
+        @cache.flushdb
       end
       
       def inflate(objects, options={})
@@ -84,9 +95,24 @@ module CaChing
             attributes.each do |attr, value|
               obj.send(:"#{attr}=", value)
             end
+            obj.changed_attributes.clear
+            obj.send(:instance_variable_set, "@new_record", false)
             obj
           end
         end
+      end
+      
+      def deflate(object, options={})
+        attributes = if options[:old_values]
+          object.attributes.keys.inject({}) do |attributes, key|
+            attributes[key] = object.send(:"#{key}_was")
+            attributes
+          end
+        else
+          object.attributes
+        end
+        
+        ActiveSupport::JSON.encode(attributes)
       end
       
       def deflate_with_score(objects, options={})
@@ -94,11 +120,7 @@ module CaChing
         
         score_method = options[:sorted_by] || :id
         
-        objects.map { |object| [object.send(score_method).to_i, ActiveSupport::JSON.encode(object.attributes)] }
-      end
-      
-      def method_missing(method_name, *args, &block)
-        @cache.send method_name, *args, &block
+        objects.map { |object| [object.send(score_method).to_i, deflate(object)] }
       end
     end
   end
