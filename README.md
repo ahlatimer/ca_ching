@@ -89,6 +89,12 @@ composite key *is* specified, CaChing will keep the resulting set.
 While there is support for this in the Redis adapter, there isn't any support in the ActiveRecord ties as I haven't
 decided how, exactly, I'd like to add this. 
 
+### Thar be dragons
+
+While I've tried to outline the issues here (and write failing specs for them), realize that this is
+still very much alpha software. There are probably a number of unknown unknowns that I just haven't
+uncovered yet. 
+
 ## Ruby/Rails versions supported
 
 Ruby 1.9.2 and Rails 3.1+ are officially supported. I try to stick to Ruby 1.8.7 syntax, so it may be supported, 
