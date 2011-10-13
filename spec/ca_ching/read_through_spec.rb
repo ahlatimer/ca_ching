@@ -42,6 +42,8 @@ module CaChing
           end
           
           it 'finds with many parameters' do
+            pending
+            
             person = Person.find_by_name_and_age(@person.name, @person.age)
             person.from_cache?.should == true
             person.should == @person
@@ -54,6 +56,8 @@ module CaChing
           end
           
           it 'finds all with many parameters' do
+            pending
+            
             people = Person.find_all_by_age_and_salary(@person.age, @person.salary)
             people.from_cache?.should == true
             people.should == Person.where(:age => @person.age, :salary => @person.salary).to_a_without_cache
@@ -69,6 +73,8 @@ module CaChing
             end
             
             it 'finds with many parameters' do
+              pending
+              
               people = Person.where(:age => @person.age, :salary => @person.salary).all
               people.from_cache?.should == true
               people.should == Person.where(:age => @person.age, :salary => @person.salary).to_a_without_cache
@@ -139,6 +145,8 @@ module CaChing
           end
           
           it 'finds with many parameters' do
+            pending
+            
             person = Person.find_by_name_and_age(@person.name, @person.age)
             person.from_cache?.should == false
             
@@ -155,6 +163,8 @@ module CaChing
           end
           
           it 'finds all with many parameters' do
+            pending
+            
             person = Person.find_all_by_name_and_age(@person.name, @person.age)
             person.from_cache?.should == false
             
@@ -174,6 +184,7 @@ module CaChing
             end
             
             it 'finds with many parameters' do
+              pending
               person = Person.where(:name => @person.name, :age => @person.age).all
               person.from_cache?.should == false
               
