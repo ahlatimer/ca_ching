@@ -12,6 +12,10 @@ class Person < ActiveRecord::Base
   
   has_many :articles
   has_many :comments
+  
+  index :id
+  index :name
+  index :age
 end
 
 class Article < ActiveRecord::Base
