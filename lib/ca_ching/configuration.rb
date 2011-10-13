@@ -11,5 +11,13 @@ module CaChing
     def cache
       @cache 
     end
+    
+    def disabled?
+      @disabled
+    end
+    
+    def disabled=(d)
+      @disabled = d
+    end
   end
 end

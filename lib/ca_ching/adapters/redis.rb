@@ -13,7 +13,7 @@ module CaChing
         return nil if keys.empty?
         
         offset = query.offset || 0
-        limit = (query.limit || -1) + offset
+        limit = (query.limit || 0) + offset - 1
         
         if keys.length <= 1
           key = "#{query.table_name}:#{keys[0]}"

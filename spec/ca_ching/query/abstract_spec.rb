@@ -170,6 +170,26 @@ module CaChing
           query.to_key.should == 'people:name="Andrew"&age="22"'
         end
       end
+      
+      describe '#primary_key?' do
+        it 'returns true if the query is only on the primary key' do
+          ar = Person.where(:id => 1)
+          query = Abstract.new(ar)
+          query.primary_key?.should == true
+        end
+        
+        it 'returns false if the query is not on the primary key' do
+          ar = Person.where(:name => 'Andrew')
+          query = Abstract.new(ar)
+          query.primary_key?.should == false
+        end
+        
+        it 'returns false if the query is on the primary key and another field' do
+          ar = Person.where(:id => 1, :name => 'Andrew')
+          query = Abstract.new(ar)
+          query.primary_key?.should == false
+        end
+      end
     end
   end
 end

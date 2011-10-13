@@ -5,15 +5,24 @@ module CaChing
     describe 'finding on indexed fields' do
       before :all do
         @person = Person.where(:id => 1).to_a_without_cache.first
+        @cache = CaChing::Adapters::Redis.new
+      end
+      
+      before :each do
+        @cache.clear!
       end
       
       describe 'cache hit' do
-        before(:all) do
-          # And prime the cache
-          # ...
+        before(:each) do
+          # Prime the cache
+          @cache.insert(Person.where(:id => 1).to_a_without_cache, :for => CaChing::Query::Abstract.new(Person.where(:id => 1)))
+          @cache.insert(Person.where(:name => @person.name).to_a_without_cache, :for => CaChing::Query::Abstract.new(Person.where(:name => @person.name)))
+          @cache.insert(Person.where(:age => @person.age).to_a_without_cache, :for => CaChing::Query::Abstract.new(Person.where(:age => @person.age)))
+          @cache.insert(Person.where(:age => @person.age, :salary => @person.salary).to_a_without_cache, :for => CaChing::Query::Abstract.new(Person.where(:age => @person.age, :salary => @person.salary)))
+          @cache.insert(Article.where(:person_id => @person.id).to_a_without_cache, :for => CaChing::Query::Abstract.new(Article.where(:person_id => @person.id)))
         end
         
-        it 'returns the result without querying the database' do
+        it 'returns the result without querying the database' do          
           person = Person.find(1)
           person.from_cache?.should == true
           person.should == Person.where(:id => 1).to_a_without_cache.first
@@ -78,14 +87,32 @@ module CaChing
               people.from_cache?.should == false
             end
           end
+          
+          describe 'limit' do
+            it 'limits the returned set to the number specified in limit' do
+              articles = Article.where(:person_id => @person.id).limit(2).all
+              articles.size.should == 2
+              articles.from_cache?.should == true
+            end
+          end
+          
+          describe 'offset' do
+            it 'offsets the returned set by the number specified' do
+              articles = Article.where(:person_id => @person.id).offset(3).all
+              articles.from_cache?.should == true
+              Article.where(:person_id => @person.id).offset(3).to_a_without_cache.should == articles
+            end
+          end
+          
+          describe 'join, include, etc.' do
+            it 'skips the cache' do
+              Article.where(:person_id => @person.id).includes(:person).all.from_cache?.should == false
+            end
+          end
         end
       end
       
       describe 'cache miss' do
-        before :each do
-          CaChing.cache.clear!
-        end
-        
         it 'stores the result returned from the database' do
           person = Person.find(1)
           person.from_cache?.should == false
@@ -139,54 +166,25 @@ module CaChing
         describe 'Arel-style finders' do
           describe 'where' do
             it 'finds with one parameter' do
-              person = Person.where(:name => @person.name)
+              person = Person.where(:name => @person.name).all
               person.from_cache?.should == false
               
-              person = Person.where(:name => @person.name)
+              person = Person.where(:name => @person.name).all
               person.from_cache?.should == true
             end
             
             it 'finds with many parameters' do
-              person = Person.where(:name => @person.name, :age => @person.age)
+              person = Person.where(:name => @person.name, :age => @person.age).all
               person.from_cache?.should == false
               
-              person = Person.where(:name => @person.name, :age => @person.age)
+              person = Person.where(:name => @person.name, :age => @person.age).all
               person.from_cache?.should == true
             end
           end
           
-          describe 'order' do
-            it 'finds if the order matches the order on an indexed field in the query' do
-              articles = Article.where(:person_id => @person.id).order('created_at DESC').all
-              articles.from_cache?.should == true
-              articles.should == Article.where(:person_id => @person.id).order('created_at DESC').to_a_without_cache
-            end
-            
-            it 'skips the cache if the order does not match an order on an indexed field in the query' do
-              articles = Article.where(:person_id => @person.id).order('updated_at DESC').all
-              articles.from_cache?.should == false
-            end
-          end
-          
           describe 'limit' do
-            it 'limits the returned set to the number specified in limit' do
-              articles = Article.where(:person_id => @person.id).limit(2)
-              articles.size.should == 2
-              articles.from_cache?.should == true
-            end
-          end
-          
-          describe 'offset' do
-            it 'offsets the returned set by the number specified' do
-              articles = Article.where(:person_id => @person.id).offset(3).all
-              articles.from_cache?.should == true
-              Article.where(:person_id => @person.id).offset(3).to_a_without_cache.should == articles
-            end
-          end
-          
-          describe 'join, include, etc.' do
-            it 'skips the cache' do
-              Article.where(:person_id => @person.id).includes(:person).all.from_cache?.should == false
+            it 'will cache an incorrect number of items' do
+              true.should == false
             end
           end
         end

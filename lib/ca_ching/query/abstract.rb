@@ -44,7 +44,7 @@ module CaChing
             end
           end
           
-          hash
+          @where = hash
         end
       end
       
@@ -75,6 +75,11 @@ module CaChing
       # table_name:encode(field1, [operator1, value1])&encode(field2, [operator2, value2])...
       def to_key
         "#{table_name}:#{where.map { |field, operator_and_value| encode(field, operator_and_value) } * "&" }"
+      end
+      
+      def primary_key?
+        @where ||= where
+        @where.keys.length == 1 && @where.keys.include?(@collection.primary_key.to_sym)
       end
       
       private

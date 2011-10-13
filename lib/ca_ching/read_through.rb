@@ -16,7 +16,7 @@ module CaChing
       # where(:foo => :bar), order('foo DESC'), etc. go through to_a before being returned.
       # Hook into that point to check the cache. 
       def to_a_with_cache
-        return to_a_without_cache if CaChing.cache.nil? 
+        return to_a_without_cache if CaChing.cache.nil? || CaChing.disabled? 
         
         query = CaChing::Query::Select.new(self)
         result = CaChing.cache.find(query)
@@ -29,6 +29,7 @@ module CaChing
         end
         
         result.from_cache = self.from_cache?
+        result.each { |item| item.from_cache = self.from_cache? }
         
         return result
       end
@@ -38,7 +39,7 @@ module CaChing
       end
       
       def cacheable?
-        false
+        !where_values.empty?
       end
     end
     

@@ -24,10 +24,12 @@ end
 RSpec.configure do |config|
   CaChing.configure do |config|
     config.cache = CaChing::Adapters::Redis.new(:host => 'localhost', :port => 6379)
+    config.disabled = true
   end
   
   config.before(:suite) do
     Schema.create
+    CaChing.disabled = false
   end
   
   config.before(:all) { Sham.reset(:before_all) }
