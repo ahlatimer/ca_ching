@@ -50,9 +50,9 @@ miss and pull the data into the cache.
 
 ## Queries supported
 
-Generally anything `eqality` is supported by CaChing. Currently, only single fields can be found (e.g., `Person.where(:name => 'Andrew')` will be cached,
+Generally anything involving equality is supported by CaChing. Currently, only single fields can be found (e.g., `Person.where(:name => 'Andrew')` will be cached,
 `Person.where(:name => 'Andrew', :age => 22)` is not). There is some plumbing for adding support for the latter, and support will be
-introduced as soon as possible. 
+introduced as soon as possible. I also have plans to add limited support for comparators (i.e., <, <=, >, >=).
 
 Anything including joins, includes, `OR`, and inequality (!=) are not supported, nor do I have any plans for adding support. 
 
@@ -75,7 +75,7 @@ These queries are not:
 
 ### Order
 
-Order is not currently supported, although there will be some order semantics in the next version. 
+Order is not currently supported, although there will be some order functionality in the next version. 
 
 ### Composite keys and queries against multiple fields
 
@@ -93,7 +93,7 @@ decided how, exactly, I'd like to add this.
 
 While I've tried to outline the issues here (and write failing specs for them), realize that this is
 still very much alpha software. There are probably a number of unknown unknowns that I just haven't
-uncovered yet. 
+uncovered yet. If you find them, please be sure to [let me know](http://github.com/ahlatimer/ca_ching/issues)!
 
 ## Ruby/Rails versions supported
 
