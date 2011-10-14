@@ -45,7 +45,8 @@ module CaChing
                                :joined_includes_values,
                                :joins_values,
                                :lock_value,
-                               :select_values]
+                               :select_values,
+                               :order_values]
         !where_values.empty? && find_on_indexed_fields? && unsupported_methods.inject(true) { |flag, method| self.send(method).send(method.to_s =~ /values/ ? :empty? : :nil?) && flag }
       end
       
