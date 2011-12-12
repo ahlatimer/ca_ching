@@ -6,7 +6,10 @@ That means that when you read from the database, your results are stored in the 
 the database, whatever is written to the database is also written to the cache (write-through). If the results are already
 in the cache, great, they're read straight from there on a read, and updated on a write. 
 
-Take a look at `SPEC.md` for what's planned for v1.
+This is definitely still alpha-level software. It's just something I thought should exist; I'm not using it in production
+anywhere. It could blow up in totally unexpected, but nevertheless exciting, ways. If it does fall over, [let me know](http://github.com/ahlatimer/ca_ching/issues).
+
+Take a look at `SPEC.md` for what's planned for v1. 
 
 ## Getting started
 
