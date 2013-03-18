@@ -99,7 +99,7 @@ module CaChing
             it 'handles multiple clauses' do
               ar = Person.where(:name => 'Andrew', :age => 22)
               query = Abstract.new(ar)
-              query.where.should == { :name => ['=', 'Andrew'], :age => ['=', 22] }
+              query.where.should == { :name => ['=', 'Andrew'], :age => ['=', '22'] }
             end
           end
         end

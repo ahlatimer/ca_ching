@@ -20,6 +20,6 @@ Gem::Specification.new do |s|
   
   s.add_dependency 'hiredis'
   s.add_dependency 'redis', '2.2.2'
-  s.add_dependency 'activesupport', '>= 3.1.0'
-  s.add_dependency 'activerecord', '>= 3.1.0'
+  s.add_dependency 'activesupport', '>= 3.2.0'
+  s.add_dependency 'activerecord', '>= 3.2.0'
 end

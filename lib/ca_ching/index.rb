@@ -19,10 +19,8 @@ module CaChing
       end
     end
     
-    module InstanceMethods
-      def indexed_fields
-        self.class.indexed_fields
-      end
+    def indexed_fields
+      self.class.indexed_fields
     end
   end
 end
